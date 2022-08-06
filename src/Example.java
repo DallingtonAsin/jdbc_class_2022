@@ -3,11 +3,42 @@ import java.util.*;
 
 public class Example {
 	
+	private String dbname = "lecturers";
 	// select, select using procedure, update, delete, batch execution
 	public Connection getConnection() throws Exception {
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/school", "Dallington", "Dallington100");
+		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+this.dbname+"", "Dallington", "Dallington100");
 		return con;
+	}
+	
+	public void createDB() throws Exception {
+		try {
+			
+			String query = "CREATE DATABASE IF NOT EXISTS "+this.dbname+"";
+			Connection con = this.getConnection();
+			Statement stmt = con.createStatement();
+			Boolean result = stmt.execute(query);
+			System.out.println("Database created successfully");
+			
+			
+		}catch(Exception e) {
+			throw e;
+		}
+	}
+	
+	
+	public void createTable() throws Exception {
+		try {
+		
+			String query = "CREATE TABLE IF NOT EXISTS teachers(id INT(255) NOT NULL PRIMARY KEY AUTO_INCREMENT, name VARCHAR(20), regId VARCHAR(20) UNIQUE, course VARCHAR(20), age INT(100))";
+			Connection con = this.getConnection();
+			Statement stmt = con.createStatement();
+			Boolean result = stmt.execute(query);
+			System.out.println("Table created successfully");
+			
+		}catch(Exception e) {
+			throw e;
+		}
 	}
 	
 	// Get students using select statement
@@ -16,6 +47,12 @@ public class Example {
 			 String query = "select * from students";
 			 Statement stmt = con.createStatement();
 			 ResultSet rs = stmt.executeQuery(query);
+			 
+			 if (stmt.execute(query)) {
+			      ResultSet  rees = stmt.getResultSet();
+			    }
+			 
+			 
 			 while(rs.next()) {
 				 String name = rs.getString("name");
 				 String reg_no = rs.getString("reg_no");
@@ -111,8 +148,11 @@ public class Example {
 //		e.deleteStudentDetails(sRegNo);
 //		input.close();
 		
-		e.executeBatchProcessing();
-		e.getStudentsByStoredProc();
+//		e.executeBatchProcessing();
+//		e.getStudentsByStoredProc();
+		
+//		e.createDB();
+		e.createTable();
 		
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -122,9 +162,3 @@ public class Example {
 
 }
 
-//DELIMITER $$
-//CREATE PROCEDURE GetStudentData()
-//BEGIN
-//    SELECT * FROM studentMarks;
-//END$$
-//DELIMITER ;
